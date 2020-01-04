@@ -1,4 +1,4 @@
-﻿using System;
+﻿  using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,34 +14,27 @@ namespace TUTORIALS_LOB.ViewModels
 {
     public class SalesViewModel : ViewModelBase
     {
-        private SampleOrder _selected;
-
-        public SampleOrder Selected
+        private Order _selected;
+        public Order Selected
         {
-            get { return _selected; }
-            set { Set(ref _selected, value); }
+            get => _selected;
+            set
+            {
+                Set(ref _selected, value);
+            }
         }
-
-        public ObservableCollection<SampleOrder> SampleItems { get; private set; } = new ObservableCollection<SampleOrder>();
-
-        public SalesViewModel()
-        {
-        }
-
+        public ObservableCollection<Order> Orders { get; private set; }
         public async Task LoadDataAsync(MasterDetailsViewState viewState)
         {
-            SampleItems.Clear();
-
-            var data = await SampleDataService.GetMasterDetailDataAsync();
-
-            foreach (var item in data)
+            var orders = await DataService.GetOrdersAsync();
+            if (orders != null)
             {
-                SampleItems.Add(item);
+                Orders = new ObservableCollection<Order>(orders);
+                RaisePropertyChanged("Orders");
             }
-
             if (viewState == MasterDetailsViewState.Both)
             {
-                Selected = SampleItems.First();
+                Selected = Orders.FirstOrDefault();
             }
         }
     }
